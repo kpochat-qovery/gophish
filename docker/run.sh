@@ -79,6 +79,11 @@ if [ -n "${DB_FILE_PATH+set}" ] ; then
         --arg DB_FILE_PATH "${DB_FILE_PATH}" \
         '.db_path = $DB_FILE_PATH' config.json > config.json.tmp && \
         cat config.json.tmp > config.json
+elif [ -n "${DB_MYSQL_DATABASE_NAME+set}" || -n "{$DB_MYSQL_USER+set}" || -n "{$DB_MYSQL_PASSWORD+set}" || -n "{$DB_MYSQL_PORT+set}" || -n "{$DB_MYSQL_HOST+set}" ] ; then
+    jq -r \
+        --arg DB_CONNECTION_STRING "${DB_MYSQL_USER}:${DB_MYSQL_PASSWORD}@(${DB_MYSQL_HOST}:${DB_MYSQL_PORT})/${DB_MYSQL_DATABASE_NAME}?charset=utf8&parseTime=True&loc=UTC" \
+        '.db_path = $DB_FILE_PATH' config.json > config.json.tmp && \
+        cat config.json.tmp > config.json
 fi
 
 echo "Runtime configuration: "
